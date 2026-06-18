@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASL Informatique</title>
+
+  <style>
+    :root {
+      --primary:#0f172a;
+      --secondary:#1e293b;
+      --accent:#3b82f6;
+      --student:#fbbf24;
+      --teacher:#22d3ee;
+      --success:#22c55e;
+      --danger:#ef4444;
+      --text:#f8fafc;
+      --muted:#94a3b8;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Arial, sans-serif; }
+
+    body {
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,.18), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(34,211,238,.12), transparent 35%),
+        var(--primary);
+      color:var(--text);
+    }
+
+    .grid {
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:42px 42px;
+    }
+
+    nav {
+      position:sticky;
+      top:0;
+      z-index:10;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:15px;
+      padding:14px 24px;
+      background:rgba(15,23,42,.92);
+      backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+
+    .logo {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:1.35rem;
+      font-weight:800;
+    }
+
+    .logo span:first-child { font-size:1.8rem; }
+
+    .nav-buttons {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button {
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s;
+      background:var(--accent);
+      color:white;
+    }
+
+    button:hover { transform:translateY(-1px); filter:brightness(1.08); }
+
+    .btn-student { background:var(--student); color:#111; }
+    .btn-teacher { background:var(--teacher); color:#111; }
+    .btn-success { background:var(--success); }
+    .btn-danger { background:var(--danger); }
+    .btn-dark { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.15); }
+
+    main {
+      width:min(1150px,94%);
+      margin:24px auto;
+      display:grid;
+      gap:18px;
+    }
+
+    .hero, .card, .role-card {
+      background:rgba(30,41,59,.72);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:20px;
+      box-shadow:0 14px 35px rgba(0,0,0,.22);
+    }
+
+    .hero { padding:26px; }
+
+    .badge {
+      display:inline-block;
+      padding:6px 12px;
+      border-radius:999px;
+      background:rgba(59,130,246,.15);
+      border:1px solid rgba(59,130,246,.35);
+      color:#bfdbfe;
+      font-size:.85rem;
+      margin-bottom:12px;
+    }
+
+    h1 { font-size:clamp(1.8rem,4vw,3rem); margin-bottom:10px; }
+    h2 { margin-bottom:10px; }
+    h3 { margin-bottom:8px; }
+
+    .hero p, .role-card p, .card p {
+      color:var(--muted);
+      line-height:1.45;
+      margin-bottom:12px;
+    }
+
+    .role-container {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:16px;
+      margin-top:20px;
+    }
+
+    @media(min-width:800px) {
+      .role-container { grid-template-columns:1fr 1fr; }
+    }
+
+    .role-card {
+      padding:20px;
+      cursor:pointer;
+      transition:.25s;
+    }
+
+    .role-card:hover {
+      transform:translateY(-4px);
+      border-color:rgba(255,255,255,.22);
+    }
+
+    .features {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    @media(min-width:900px) {
+      .features { grid-template-columns:repeat(3,1fr); }
+    }
+
+    .feature {
+      background:rgba(15,23,42,.65);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .feature p {
+      color:var(--muted);
+      font-size:.92rem;
+      line-height:1.4;
+    }
+
+    .card { padding:20px; }
+
+    .hidden { display:none !important; }
+
+    label {
+      display:block;
+      margin:10px 0 6px;
+      font-weight:700;
+      font-size:.92rem;
+    }
+
+    input, select {
+      width:100%;
+      padding:11px;
+      border:none;
+      border-radius:12px;
+      background:#f8fafc;
+      color:#111;
+      font-size:.95rem;
+      margin-bottom:8px;
+    }
+
+    .password-wrapper { position:relative; }
+    .password-wrapper input { padding-right:48px; }
+
+    .eye-button {
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-55%);
+      cursor:pointer;
+      font-size:1.2rem;
+      user-select:none;
+      color:#111;
+      opacity:.75;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
+      background:rgba(15,23,42,.65);
+      border-radius:14px;
+      overflow:hidden;
+    }
+
+    th, td {
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      text-align:left;
+      font-size:.9rem;
+    }
+
+    th { background:rgba(0,0,0,.28); }
+
+    .notice {
+      padding:12px;
+      border-radius:14px;
+      background:rgba(59,130,246,.15);
+      border:1px solid rgba(59,130,246,.35);
+      color:#dbeafe;
+      margin-top:10px;
+      line-height:1.45;
+    }
+
+    .modules {
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+
+    @media(min-width:850px) {
+      .modules { grid-template-columns:repeat(2,1fr); }
+    }
+
+    .module {
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;
+      padding:15px;
+    }
+
+    .module p { font-size:.88rem; }
+
+    .progress {
+      width:100%;
+      height:9px;
+      background:rgba(255,255,255,.12);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:8px;
+    }
+
+    .progress span {
+      display:block;
+      height:100%;
+      background:linear-gradient(90deg,var(--success),var(--student));
+    }
+
+    .exercise-box {
+      background:rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:16px;
+      padding:16px;
+      margin-top:12px;
+    }
+
+    .question {
+      margin:14px 0;
+      padding:12px;
+      background:rgba(255,255,255,.07);
+      border-radius:14px;
+    }
+
+    .question p {
+      color:white;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .question label {
+      font-weight:400;
+      margin:6px 0;
+      color:#e2e8f0;
+    }
+
+    .result {
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      background:rgba(34,197,94,.16);
+      border:1px solid rgba(34,197,94,.35);
+      color:#dcfce7;
+      font-weight:700;
+    }
+
+    .modal {
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(0,0,0,.72);
+      z-index:100;
+      padding:20px;
+    }
+
+    .modal-box {
+      width:min(480px,100%);
+      background:var(--secondary);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:22px;
+      padding:24px;
+      box-shadow:0 22px 70px rgba(0,0,0,.5);
+    }
+
+    .modal-box p {
+      color:var(--muted);
+      line-height:1.45;
+      margin-bottom:14px;
+    }
+
+    .modal-actions {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    footer {
+      text-align:center;
+      color:var(--muted);
+      padding:22px;
+      font-size:.85rem;
+    }
+
+    @media(max-width:650px) {
+      nav { flex-direction:column; align-items:flex-start; }
+      table { display:block; overflow-x:auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="grid"></div>
+
+  <nav>
+    <div class="logo">
+      <span>💻</span>
+      <span>ASL Informatique</span>
+    </div>
+
+    <div class="nav-buttons">
+      <button class="btn-dark" onclick="setLanguage('fr')">🇫🇷 FR</button>
+      <button class="btn-dark" onclick="setLanguage('es')">🇪🇸 ES</button>
+      <button class="btn-dark" onclick="setLanguage('en')">🇬🇧 EN</button>
+      <button class="btn-student" onclick="openStudentLogin()">👤 Élève</button>
+      <button class="btn-teacher" onclick="openTeacherLogin()">👨‍🏫 Formateur</button>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <div class="badge" id="badgeText">Formation numérique progressive</div>
+      <h1 id="heroTitle">Apprendre l’informatique simplement</h1>
+      <p id="heroText">
+        Une plateforme d'entraînement pour apprendre les bases du numérique :
+        ordinateur, internet, compte Google, Gmail, Google Meet, scanner et WhatsApp.
+      </p>
+
+      <div class="role-container">
+        <div class="role-card" onclick="openStudentLogin()">
+          <h2 id="studentCardTitle">👤 Espace élève</h2>
+          <p id="studentCardText">Accès aux modules, exercices et progression personnelle avec un code donné par le formateur.</p>
+          <button class="btn-student" id="studentBtn">Entrer comme élève</button>
+        </div>
+
+        <div class="role-card" onclick="openTeacherLogin()">
+          <h2 id="teacherCardTitle">👨‍🏫 Espace formateur</h2>
+          <p id="teacherCardText">Gestion des élèves, création des codes d’accès et suivi de la progression.</p>
+          <button class="btn-teacher" id="teacherBtn">Entrer comme formateur</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="feature">
+        <h3 id="feature1Title">🎯 Objectif</h3>
+        <p id="feature1Text">Apprendre les gestes numériques utiles du quotidien, étape par étape.</p>
+      </div>
+
+      <div class="feature">
+        <h3 id="feature2Title">📈 Progression</h3>
+        <p id="feature2Text">Chaque élève peut avancer module par module avec un suivi en pourcentage.</p>
+      </div>
+
+      <div class="feature">
+        <h3 id="feature3Title">🔐 Accès simple</h3>
+        <p id="feature3Text">Chaque élève possède son propre code d’accès fourni par le formateur.</p>
+      </div>
+    </section>
+
+    <section id="studentDashboard" class="card hidden">
+      <h2 id="studentDashboardTitle">👤 Tableau élève</h2>
+      <div id="studentWelcome" class="notice"></div>
+
+      <div class="modules">
+        <div class="module">
+          <h3>01 — Premiers pas avec l’ordinateur</h3>
+          <p>Allumer, se connecter, comprendre le bureau, clavier et souris.</p>
+          <button onclick="openExercise('module01')">Faire l’exercice</button>
+          <div class="progress"><span id="studentProgressBar" style="width:0%"></span></div>
+        </div>
+
+        <div class="module">
+          <h3>02 — Internet et recherche</h3>
+          <p>Ouvrir un navigateur, rechercher une information, comprendre les liens.</p>
+          <button onclick="alert('Ce module sera préparé après le module 01.')">En préparation</button>
+        </div>
+
+        <div class="module">
+          <h3>03 — Google et Gmail</h3>
+          <p>Se connecter, récupérer un mot de passe, lire et envoyer un e-mail.</p>
+          <button onclick="alert('Ce module sera préparé après le module 01.')">En préparation</button>
+        </div>
+
+        <div class="module">
+          <h3>04 — Google Meet</h3>
+          <p>Rejoindre une visioconférence, utiliser micro, caméra et messages.</p>
+          <button onclick="alert('Ce module sera préparé après le module 01.')">En préparation</button>
+        </div>
+      </div>
+
+      <div id="exerciseArea" class="exercise-box hidden"></div>
+    </section>
+
+    <section id="teacherDashboard" class="card hidden">
+      <h2>👨‍🏫 Tableau formateur</h2>
+
+      <div class="notice">
+        Code formateur actuel : <strong>ASL-FORMATEUR</strong><br>
+        Les élèves de départ sont déjà enregistrés : Véronique, Leïta et Serge.
+      </div>
+
+      <h3 style="margin-top:18px;">➕ Ajouter un élève</h3>
+
+      <label>Nom ou prénom de l’élève</label>
+      <input id="newStudentName" placeholder="Exemple : Fatima">
+
+      <label>Code d’accès élève</label>
+      <div class="password-wrapper">
+        <input id="newStudentCode" type="password" placeholder="Exemple : QX7M-4821">
+        <span class="eye-button" onclick="toggleInputVisibility('newStudentCode', this)">👁️</span>
+      </div>
+
+      <label>Niveau</label>
+      <select id="newStudentLevel">
+        <option>Débutant</option>
+        <option>Intermédiaire</option>
+        <option>Avancé</option>
+      </select>
+
+      <button class="btn-success" onclick="addStudent()">Enregistrer l’élève</button>
+      <button class="btn-dark" onclick="generateCode()">Générer un code</button>
+
+      <h3 style="margin-top:22px;">📋 Élèves enregistrés</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Élève</th>
+            <th>Code</th>
+            <th>Niveau</th>
+            <th>Score dernier exercice</th>
+            <th>Progression</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="studentsTable"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer>
+    ASL Informatique — outil local de formation numérique progressive
+  </footer>
+
+  <div id="loginModal" class="modal hidden">
+    <div class="modal-box">
+      <h2 id="loginTitle">Connexion</h2>
+      <p id="loginText">Indique ton code d’accès.</p>
+
+      <label id="loginNameLabel">Nom ou identifiant</label>
+      <input id="loginName" placeholder="Nom ou identifiant">
+
+      <label>Code d’accès</label>
+      <div class="password-wrapper">
+        <input id="loginCode" type="password" placeholder="Code d’accès">
+        <span class="eye-button" onclick="toggleInputVisibility('loginCode', this)">👁️</span>
+      </div>
+
+      <div class="modal-actions">
+        <button onclick="validateLogin()">Se connecter</button>
+        <button class="btn-dark" onclick="closeLogin()">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TEACHER_CODE = "ASL-FORMATEUR";
+    let currentLoginMode = null;
+    let currentStudent = null;
+    let currentLang = "fr";
+
+    const defaultStudents = [
+      { id: 1, name: "Véronique", code: "VR8K-5319", level: "Débutant", progress: 0, lastScore: "-", createdAt: "Pré-enregistrée" },
+      { id: 2, name: "Leïta", code: "LT2P-8471", level: "Débutant", progress: 0, lastScore: "-", createdAt: "Pré-enregistrée" },
+      { id: 3, name: "Serge", code: "SG5M-2264", level: "Débutant", progress: 0, lastScore: "-", createdAt: "Pré-enregistré" }
+    ];
+
+    const uiText = {
+      fr: {
+        badge: "Formation numérique progressive",
+        heroTitle: "Apprendre l’informatique simplement",
+        heroText: "Une plateforme d'entraînement pour apprendre les bases du numérique : ordinateur, internet, compte Google, Gmail, Google Meet, scanner et WhatsApp.",
+        studentCardTitle: "👤 Espace élève",
+        studentCardText: "Accès aux modules, exercices et progression personnelle avec un code donné par le formateur.",
+        teacherCardTitle: "👨‍🏫 Espace formateur",
+        teacherCardText: "Gestion des élèves, création des codes d’accès et suivi de la progression.",
+        studentBtn: "Entrer comme élève",
+        teacherBtn: "Entrer comme formateur",
+        feature1Title: "🎯 Objectif",
+        feature1Text: "Apprendre les gestes numériques utiles du quotidien, étape par étape.",
+        feature2Title: "📈 Progression",
+        feature2Text: "Chaque élève peut avancer module par module avec un suivi en pourcentage.",
+        feature3Title: "🔐 Accès simple",
+        feature3Text: "Chaque élève possède son propre code d’accès fourni par le formateur."
+      },
+      es: {
+        badge: "Formación digital progresiva",
+        heroTitle: "Aprender informática de forma sencilla",
+        heroText: "Una plataforma de entrenamiento para aprender las bases digitales: ordenador, internet, cuenta Google, Gmail, Google Meet, escanear y WhatsApp.",
+        studentCardTitle: "👤 Espacio alumno",
+        studentCardText: "Acceso a módulos, ejercicios y progreso personal con un código dado por el formador.",
+        teacherCardTitle: "👨‍🏫 Espacio formador",
+        teacherCardText: "Gestión de alumnos, creación de códigos de acceso y seguimiento del progreso.",
+        studentBtn: "Entrar como alumno",
+        teacherBtn: "Entrar como formador",
+        feature1Title: "🎯 Objetivo",
+        feature1Text: "Aprender acciones digitales útiles del día a día, paso a paso.",
+        feature2Title: "📈 Progreso",
+        feature2Text: "Cada alumno puede avanzar módulo por módulo con seguimiento en porcentaje.",
+        feature3Title: "🔐 Acceso simple",
+        feature3Text: "Cada alumno tiene su propio código de acceso dado por el formador."
+      },
+      en: {
+        badge: "Progressive digital training",
+        heroTitle: "Learn computer basics simply",
+        heroText: "A training platform to learn digital basics: computer, internet, Google account, Gmail, Google Meet, scanning and WhatsApp.",
+        studentCardTitle: "👤 Student space",
+        studentCardText: "Access modules, exercises and personal progress with a code given by the trainer.",
+        teacherCardTitle: "👨‍🏫 Trainer space",
+        teacherCardText: "Manage students, create access codes and follow progress.",
+        studentBtn: "Enter as student",
+        teacherBtn: "Enter as trainer",
+        feature1Title: "🎯 Goal",
+        feature1Text: "Learn useful everyday digital actions, step by step.",
+        feature2Title: "📈 Progress",
+        feature2Text: "Each student can progress module by module with percentage tracking.",
+        feature3Title: "🔐 Simple access",
+        feature3Text: "Each student has a personal access code provided by the trainer."
+      }
+    };
+
+    const exercises = {
+      module01: {
+        title: {
+          fr: "Exercice 01 — Premiers pas avec l’ordinateur",
+          es: "Ejercicio 01 — Primeros pasos con el ordenador",
+          en: "Exercise 01 — First steps with the computer"
+        },
+        questions: [
+          {
+            q: {
+              fr: "Que faut-il faire pour démarrer un ordinateur ?",
+              es: "¿Qué hay que hacer para encender un ordenador?",
+              en: "What should you do to start a computer?"
+            },
+            options: {
+              fr: ["Appuyer sur le bouton marche/arrêt", "Cliquer sur l’écran", "Débrancher la souris"],
+              es: ["Pulsar el botón de encendido", "Hacer clic en la pantalla", "Desconectar el ratón"],
+              en: ["Press the power button", "Click on the screen", "Unplug the mouse"]
+            },
+            answer: 0
+          },
+          {
+            q: {
+              fr: "À quoi sert un mot de passe ?",
+              es: "¿Para qué sirve una contraseña?",
+              en: "What is a password used for?"
+            },
+            options: {
+              fr: ["À protéger l’accès au compte", "À augmenter le son", "À imprimer une page"],
+              es: ["Para proteger el acceso a la cuenta", "Para subir el volumen", "Para imprimir una página"],
+              en: ["To protect access to the account", "To increase the sound", "To print a page"]
+            },
+            answer: 0
+          },
+          {
+            q: {
+              fr: "Le bureau de l’ordinateur peut être comparé à quoi ?",
+              es: "¿Con qué se puede comparar el escritorio del ordenador?",
+              en: "What can the computer desktop be compared to?"
+            },
+            options: {
+              fr: ["Une table de travail avec des outils", "Une télévision", "Une machine à laver"],
+              es: ["Una mesa de trabajo con herramientas", "Una televisión", "Una lavadora"],
+              en: ["A work desk with tools", "A television", "A washing machine"]
+            },
+            answer: 0
+          },
+          {
+            q: {
+              fr: "À quoi sert un dossier sur l’ordinateur ?",
+              es: "¿Para qué sirve una carpeta en el ordenador?",
+              en: "What is a folder used for on a computer?"
+            },
+            options: {
+              fr: ["À ranger des fichiers", "À charger la batterie", "À nettoyer l’écran"],
+              es: ["Para guardar archivos", "Para cargar la batería", "Para limpiar la pantalla"],
+              en: ["To organize files", "To charge the battery", "To clean the screen"]
+            },
+            answer: 0
+          },
+          {
+            q: {
+              fr: "Quelle mémoire garde les documents durablement ?",
+              es: "¿Qué memoria guarda los documentos de forma duradera?",
+              en: "Which memory keeps documents for a long time?"
+            },
+            options: {
+              fr: ["Le disque de stockage", "La mémoire RAM", "La souris"],
+              es: ["El disco de almacenamiento", "La memoria RAM", "El ratón"],
+              en: ["The storage drive", "RAM memory", "The mouse"]
+            },
+            answer: 0
+          }
+        ]
+      }
+    };
+
+    function initializeDefaultStudents() {
+      const existing = JSON.parse(localStorage.getItem("aslStudents"));
+
+      if (!existing || existing.length === 0) {
+        localStorage.setItem("aslStudents", JSON.stringify(defaultStudents));
+      }
+    }
+
+    function getStudents() {
+      return JSON.parse(localStorage.getItem("aslStudents")) || [];
+    }
+
+    function saveStudents(students) {
+      localStorage.setItem("aslStudents", JSON.stringify(students));
+    }
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const t = uiText[lang];
+
+      badgeText.innerText = t.badge;
+      heroTitle.innerText = t.heroTitle;
+      heroText.innerText = t.heroText;
+      studentCardTitle.innerText = t.studentCardTitle;
+      studentCardText.innerText = t.studentCardText;
+      teacherCardTitle.innerText = t.teacherCardTitle;
+      teacherCardText.innerText = t.teacherCardText;
+      studentBtn.innerText = t.studentBtn;
+      teacherBtn.innerText = t.teacherBtn;
+      feature1Title.innerText = t.feature1Title;
+      feature1Text.innerText = t.feature1Text;
+      feature2Title.innerText = t.feature2Title;
+      feature2Text.innerText = t.feature2Text;
+      feature3Title.innerText = t.feature3Title;
+      feature3Text.innerText = t.feature3Text;
+
+      if (!exerciseArea.classList.contains("hidden")) {
+        openExercise("module01");
+      }
+    }
+
+    function toggleInputVisibility(inputId, iconElement) {
+      const input = document.getElementById(inputId);
+
+      if (input.type === "password") {
+        input.type = "text";
+        iconElement.textContent = "🙈";
+      } else {
+        input.type = "password";
+        iconElement.textContent = "👁️";
+      }
+    }
+
+    function openTeacherLogin() {
+      currentLoginMode = "teacher";
+      loginTitle.innerText = "Connexion formateur";
+      loginText.innerText = "Entre le code formateur pour gérer les élèves.";
+      loginNameLabel.style.display = "none";
+      loginName.style.display = "none";
+      loginCode.type = "password";
+      loginCode.value = "";
+      loginName.value = "";
+      loginModal.classList.remove("hidden");
+    }
+
+    function openStudentLogin() {
+      currentLoginMode = "student";
+      loginTitle.innerText = "Connexion élève";
+      loginText.innerText = "Entre ton prénom ou identifiant et ton code personnel.";
+      loginNameLabel.style.display = "block";
+      loginName.style.display = "block";
+      loginCode.type = "password";
+      loginCode.value = "";
+      loginName.value = "";
+      loginModal.classList.remove("hidden");
+    }
+
+    function closeLogin() {
+      loginModal.classList.add("hidden");
+      loginName.value = "";
+      loginCode.value = "";
+    }
+
+    function validateLogin() {
+      const code = loginCode.value.trim();
+
+      if (currentLoginMode === "teacher") {
+        if (code !== TEACHER_CODE) {
+          alert("Code formateur incorrect.");
+          return;
+        }
+
+        closeLogin();
+        studentDashboard.classList.add("hidden");
+        teacherDashboard.classList.remove("hidden");
+        loadStudentsTable();
+        teacherDashboard.scrollIntoView({ behavior: "smooth" });
+      }
+
+      if (currentLoginMode === "student") {
+        const name = loginName.value.trim();
+        const students = getStudents();
+
+        const found = students.find(s =>
+          s.name.toLowerCase() === name.toLowerCase() && s.code === code
+        );
+
+        if (!found) {
+          alert("Nom ou code élève incorrect.");
+          return;
+        }
+
+        currentStudent = found;
+        closeLogin();
+        teacherDashboard.classList.add("hidden");
+        studentDashboard.classList.remove("hidden");
+        updateStudentDashboard();
+        studentDashboard.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function generateCode() {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let part1 = "";
+      let part2 = "";
+
+      for (let i = 0; i < 4; i++) part1 += chars[Math.floor(Math.random() * chars.length)];
+      for (let i = 0; i < 4; i++) part2 += Math.floor(Math.random() * 10);
+
+      newStudentCode.value = part1 + "-" + part2;
+      newStudentCode.type = "text";
+    }
+
+    function addStudent() {
+      const name = newStudentName.value.trim();
+      const code = newStudentCode.value.trim();
+      const level = newStudentLevel.value;
+
+      if (!name || !code) {
+        alert("Merci d’indiquer le nom et le code de l’élève.");
+        return;
+      }
+
+      const students = getStudents();
+
+      if (students.some(s => s.code === code)) {
+        alert("Ce code existe déjà. Choisis un autre code.");
+        return;
+      }
+
+      students.push({
+        id: Date.now(),
+        name,
+        code,
+        level,
+        progress: 0,
+        lastScore: "-",
+        createdAt: new Date().toLocaleString("fr-FR")
+      });
+
+      saveStudents(students);
+
+      newStudentName.value = "";
+      newStudentCode.value = "";
+      newStudentCode.type = "password";
+
+      loadStudentsTable();
+      alert("Élève enregistré avec succès.");
+    }
+
+    function loadStudentsTable() {
+      const students = getStudents();
+
+      if (students.length === 0) {
+        studentsTable.innerHTML = `<tr><td colspan="6">Aucun élève enregistré.</td></tr>`;
+        return;
+      }
+
+      studentsTable.innerHTML = students.map(s => `
+        <tr>
+          <td>${s.name}</td>
+          <td><strong>${s.code}</strong></td>
+          <td>${s.level}</td>
+          <td>${s.lastScore || "-"}</td>
+          <td>${s.progress}%</td>
+          <td>
+            <button class="btn-danger" onclick="deleteStudent(${s.id})">Supprimer</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    function deleteStudent(id) {
+      if (!confirm("Supprimer cet élève ?")) return;
+      const students = getStudents().filter(s => s.id !== id);
+      saveStudents(students);
+      loadStudentsTable();
+    }
+
+    function updateStudentDashboard() {
+      studentWelcome.innerHTML =
+        `Bienvenue <strong>${currentStudent.name}</strong><br>
+        Niveau : ${currentStudent.level}<br>
+        Dernier score : <strong>${currentStudent.lastScore || "-"}</strong><br>
+        Progression actuelle : <strong>${currentStudent.progress}%</strong>`;
+
+      studentProgressBar.style.width = currentStudent.progress + "%";
+    }
+
+    function openExercise(moduleId) {
+      const ex = exercises[moduleId];
+      const lang = currentLang;
+      let html = `<h2>${ex.title[lang]}</h2>`;
+      html += `<p>Réponds aux questions puis clique sur “Corriger mon exercice”.</p>`;
+
+      ex.questions.forEach((q, index) => {
+        html += `<div class="question">`;
+        html += `<p>${index + 1}. ${q.q[lang]}</p>`;
+
+        q.options[lang].forEach((option, optionIndex) => {
+          html += `
+            <label>
+              <input type="radio" name="q${index}" value="${optionIndex}">
+              ${option}
+            </label>
+          `;
+        });
+
+        html += `</div>`;
+      });
+
+      html += `
+        <button class="btn-success" onclick="correctExercise('${moduleId}')">✅ Corriger mon exercice</button>
+        <div id="exerciseResult" class="result hidden"></div>
+      `;
+
+      exerciseArea.innerHTML = html;
+      exerciseArea.classList.remove("hidden");
+      exerciseArea.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function correctExercise(moduleId) {
+      const ex = exercises[moduleId];
+      let score = 0;
+      const total = ex.questions.length;
+
+      ex.questions.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+
+        if (selected && Number(selected.value) === q.answer) {
+          score++;
+        }
+      });
+
+      const percent = Math.round((score / total) * 100);
+      const newProgress = percent >= 80 ? 20 : percent >= 60 ? 10 : 5;
+
+      exerciseResult.classList.remove("hidden");
+
+      let message = "";
+      if (percent >= 80) message = "Très bien, exercice réussi.";
+      else if (percent >= 60) message = "Correct, mais il faut revoir quelques notions.";
+      else message = "À revoir tranquillement. Ce n’est pas grave, on progresse étape par étape.";
+
+      exerciseResult.innerHTML = `
+        Score : ${score}/${total} — ${percent}%<br>
+        ${message}
+      `;
+
+      if (!currentStudent) return;
+
+      let students = getStudents();
+
+      students = students.map(s => {
+        if (s.id === currentStudent.id) {
+          s.lastScore = percent + "%";
+          s.progress = Math.max(s.progress, newProgress);
+          currentStudent = s;
+        }
+        return s;
+      });
+
+      saveStudents(students);
+      updateStudentDashboard();
+    }
+
+    initializeDefaultStudents();
+    loadStudentsTable();
+  </script>
+</body>
+</html>
