@@ -133,15 +133,15 @@
       return;
     }
 
-    tbody.innerHTML = followers.map(f => \`
+    tbody.innerHTML = followers.map(f => `
       <tr>
-        <td><strong>\${escapeHtml(f.followerId)}</strong></td>
-        <td><strong>\${escapeHtml(f.code)}</strong></td>
-        <td><button class="btn-follower" onclick="downloadFollowerPdf('\${escapeHtml(f.followerId)}')">Créer le PDF</button></td>
-        <td>\${escapeHtml(f.createdAt || "-")}</td>
-        <td><button class="btn-danger" onclick="deleteFollower(\${Number(f.id)})">Supprimer</button></td>
+        <td><strong>${escapeHtml(f.followerId)}</strong></td>
+        <td><strong>${escapeHtml(f.code)}</strong></td>
+        <td><button class="btn-follower" onclick="downloadFollowerPdf('${escapeHtml(f.followerId)}')">Créer le PDF</button></td>
+        <td>${escapeHtml(f.createdAt || "-")}</td>
+        <td><button class="btn-danger" onclick="deleteFollower(${Number(f.id)})">Supprimer</button></td>
       </tr>
-    \`).join("");
+    `).join("");
   };
 
   window.openFollowerLogin = function() {
