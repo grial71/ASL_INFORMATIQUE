@@ -12,6 +12,7 @@
       --accent:#3b82f6;
       --student:#fbbf24;
       --teacher:#22d3ee;
+      --follower:#a78bfa;
       --success:#22c55e;
       --danger:#ef4444;
       --text:#f8fafc;
@@ -84,6 +85,7 @@
 
     .btn-student { background:var(--student); color:#111; }
     .btn-teacher { background:var(--teacher); color:#111; }
+    .btn-follower { background:var(--follower); color:#111; }
     .btn-success { background:var(--success); }
     .btn-danger { background:var(--danger); }
     .btn-dark { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.15); }
@@ -132,8 +134,8 @@
       margin-top:20px;
     }
 
-    @media(min-width:800px) {
-      .role-container { grid-template-columns:1fr 1fr; }
+    @media(min-width:950px) {
+      .role-container { grid-template-columns:repeat(3,1fr); }
     }
 
     .role-card {
@@ -368,6 +370,7 @@
       <button class="btn-dark" onclick="setLanguage('es')">🇪🇸 ES</button>
       <button class="btn-dark" onclick="setLanguage('en')">🇬🇧 EN</button>
       <button class="btn-student" onclick="openStudentLogin()">👤 Élève</button>
+      <button id="navFollowerBtn" class="btn-follower" onclick="openFollowerLogin()">🌐 Follower</button>
       <button class="btn-teacher" onclick="openTeacherLogin()">👨‍🏫 Formateur</button>
     </div>
   </nav>
@@ -386,6 +389,12 @@
           <h2 id="studentCardTitle">👤 Espace élève</h2>
           <p id="studentCardText">Accès aux modules, exercices et progression personnelle avec un code donné par le formateur.</p>
           <button class="btn-student" id="studentBtn">Entrer comme élève</button>
+        </div>
+
+        <div class="role-card" onclick="openFollowerLogin()">
+          <h2 id="followerCardTitle">🌐 Espace Follower</h2>
+          <p id="followerCardText">Accès séparé avec un identifiant F et un code personnel, sans mélange avec les élèves.</p>
+          <button class="btn-follower" id="followerBtn">Entrer comme Follower</button>
         </div>
 
         <div class="role-card" onclick="openTeacherLogin()">
@@ -447,6 +456,28 @@
       <div id="exerciseArea" class="exercise-box hidden"></div>
     </section>
 
+    <section id="followerDashboard" class="card hidden">
+      <h2 id="followerDashboardTitle">🌐 Espace Follower</h2>
+      <div id="followerWelcome" class="notice"></div>
+
+      <div class="modules">
+        <div class="module">
+          <h3>📄 Mon questionnaire PDF</h3>
+          <p>Le questionnaire est généré avec uniquement ton identifiant F en haut. Aucun nom n'est demandé.</p>
+          <button class="btn-follower" onclick="downloadCurrentFollowerPdf()">Télécharger mon PDF remplissable</button>
+        </div>
+
+        <div class="module">
+          <h3>🎯 Mon suivi personnalisé</h3>
+          <p>Le questionnaire sert à préciser ton niveau, tes besoins, tes projets, tes ambitions, tes idées et tes blocages.</p>
+        </div>
+      </div>
+
+      <div class="notice">
+        Ton espace Follower reste séparé de l'espace Élève. Ton identifiant F et ton code personnel ne doivent pas être partagés.
+      </div>
+    </section>
+
     <section id="teacherDashboard" class="card hidden">
       <h2>👨‍🏫 Tableau formateur</h2>
 
@@ -490,6 +521,40 @@
           </tr>
         </thead>
         <tbody id="studentsTable"></tbody>
+      </table>
+
+      <div style="height:1px;background:rgba(255,255,255,.1);margin:28px 0;"></div>
+
+      <h3>🌐 Gestion des Followers</h3>
+      <div class="notice">
+        Les Followers sont enregistrés dans un stockage séparé des élèves. Aucun nom n'est demandé.
+        <br><strong>Important :</strong> cette version reste locale au navigateur. Pour un accès privé depuis plusieurs appareils, une authentification serveur sera nécessaire.
+      </div>
+
+      <label>Identifiant Follower</label>
+      <input id="newFollowerId" readonly>
+
+      <label>Code personnel</label>
+      <div class="password-wrapper">
+        <input id="newFollowerCode" type="password" placeholder="Code personnel du Follower">
+        <span class="eye-button" onclick="toggleInputVisibility('newFollowerCode', this)">👁️</span>
+      </div>
+
+      <button class="btn-success" onclick="addFollower()">Créer l'accès Follower</button>
+      <button class="btn-dark" onclick="generateFollowerCode()">Générer un code</button>
+
+      <h3 style="margin-top:22px;">📋 Followers enregistrés</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Identifiant</th>
+            <th>Code personnel</th>
+            <th>Questionnaire PDF</th>
+            <th>Créé le</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="followersTable"></tbody>
       </table>
     </section>
   </main>
@@ -951,5 +1016,7 @@
     initializeDefaultStudents();
     loadStudentsTable();
   </script>
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="followers.js"></script>
 </body>
 </html>
